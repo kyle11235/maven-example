@@ -22,4 +22,4 @@
         setting.xml -> profiles
         pom.xml -> distributionManagement
 
-BUG-002
+#BUG-1003
