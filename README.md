@@ -22,4 +22,9 @@
         setting.xml -> profiles
         pom.xml -> distributionManagement
 
-#BUG-1003
+- test jira
+
+        git revert HEAD~1
+        #BUG-1003
+
+        
