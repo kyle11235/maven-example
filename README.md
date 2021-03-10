@@ -25,6 +25,6 @@
 - test jira
 
         git revert HEAD~1
-        #BUG-1003
+        #BUG-1005
 
         
