@@ -76,12 +76,12 @@
     <distributionManagement>
         <repository>
             <id>central</id>
-            <name>jfrogchina-releases</name>
+            <name>release-local</name>
             <url>http://182.92.214.141:8081/artifactory/libs-release-local</url>
         </repository>
         <snapshotRepository>
-            <id>snapshots</id>
-            <name>jfrogchina-snapshots</name>
+            <id>snapshot</id>
+            <name>snapshot-local</name>
             <url>http://182.92.214.141:8081/artifactory/libs-snapshot-local</url>
         </snapshotRepository>
     </distributionManagement>
