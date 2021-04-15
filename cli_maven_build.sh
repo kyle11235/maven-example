@@ -1,5 +1,7 @@
 
-build_number=2
-jfrog rt mvn clean install --build-name=maven-cli-build --build-number=$build_number
-jfrog rt bce maven-cli-build $build_number
-jfrog rt bp maven-cli-build $build_number
+BUILD_NAME=cli-maven-build
+BUILD_NUMBER=4
+
+jfrog rt mvn clean install --build-name=$BUILD_NAME --build-number=$BUILD_NUMBER
+jfrog rt bce $BUILD_NAME $BUILD_NUMBER
+jfrog rt bp $BUILD_NAME $BUILD_NUMBER
