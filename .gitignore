@@ -17,3 +17,5 @@ packages
 *.tmp
 .idea
 .DS_Store
+
+target/
