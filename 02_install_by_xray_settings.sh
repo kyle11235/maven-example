@@ -1,5 +1,5 @@
 
-# delete local cache
+# delete local cache (take fastjson for example)
 rm -rf /Users/kyle/.m2/repository/com/alibaba/fastjson
 
 # insntall
