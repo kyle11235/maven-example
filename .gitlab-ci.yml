@@ -21,39 +21,44 @@ build:
     - curl -fL https://getcli.jfrog.io | sh
 
     # Configure Artifactory instance with JFrog CLI
-    - ./jfrog rt config --url=$ARTIFACTORY_URL --user=$ARTIFACTORY_USER --password=$ARTIFACTORY_PASS
-    - ./jfrog rt c show
+    # - ./jfrog rt config --url=$ARTIFACTORY_URL --user=$ARTIFACTORY_USER --password=$ARTIFACTORY_PASS
+    - ./jfrog config add art1 --artifactory-url=$ARTIFACTORY_URL --user=$ARTIFACTORY_USER --password=$ARTIFACTORY_PASS
+    - ./jfrog c show
     
     # - mvn clean install
-    # - ./jfrog rt mvn "clean install sonar:sonar -Dsonar.language=java -Dsonar.projectKey=gitlabci-maven-artifactory -Dsonar.java.binaries=* -Dsonar.host.url=http://10.0.0.173:9000 -Dsonar.login=308aa92369500dbfff00b38283e358031bfea8aa" maven.conf --build-name=gitlabci-maven-artifactory --build-number=$CI_JOB_ID
-    - ./jfrog rt mvn "clean install" maven.conf --build-name=gitlabci-maven-artifactory --build-number=$CI_JOB_ID
+    # - ./jfrog rt "mvn clean install sonar:sonar -Dsonar.language=java -Dsonar.projectKey=gitlab-maven-build -Dsonar.java.binaries=* -Dsonar.host.url=http://10.0.0.173:9000 -Dsonar.login=308aa92369500dbfff00b38283e358031bfea8aa" --build-name=gitlab-maven-build --build-number=$CI_JOB_ID
+    - ./jfrog rt mvn clean install --build-name=gitlab-maven-build --build-number=$CI_JOB_ID
   
     # bcs = build collect environment variables 
-    - ./jfrog rt bce gitlabci-maven-artifactory $CI_JOB_ID
+    - ./jfrog rt bce gitlab-maven-build $CI_JOB_ID
         
     # bag = build add git (git revision & jira)
     # The build-add-git (bag) command collects the Git revision and URL from the local .git directory and adds it to the build-info. 
     # It can also collect the list of tracked project issues (for example, issues stored in JIRA or other bug tracking systems) and add them to the build-info. 
     # The issues are collected by reading the git commit messages from the local git log
-    - ./jfrog rt bag gitlabci-maven-artifactory $CI_JOB_ID --config jira-cli.conf
+    - ./jfrog rt bag gitlab-maven-build $CI_JOB_ID --config jira-cli.conf
     
     # set sonar url
-    - ./jfrog rt sp "libs-snapshot-local/org/jfrog/test/multi3/3.7-SNAPSHOT/*.war" "qulity.gate.sonarUrl=http://192.168.230.156:9000/dashboard/index/"
+    - ./jfrog rt sp "gitlab-libs-snapshot-local/org/jfrog/test/multi3/4.7-SNAPSHOT/*.war" "qulity.gate.sonarUrl=http://192.168.230.156:9000/dashboard/index/"
     
     # sp = set property
-    - ./jfrog rt sp "libs-snapshot-local/org/jfrog/test/multi3/3.7-SNAPSHOT/*.war" "deploy.tool=ansible"
-    - ./jfrog rt sp "libs-snapshot-local/org/jfrog/test/multi3/3.7-SNAPSHOT/*.war" "ip=127.0.0.1"
+    - ./jfrog rt sp "gitlab-libs-snapshot-local/org/jfrog/test/multi3/4.7-SNAPSHOT/*.war" "deploy.tool=ansible"
+    - ./jfrog rt sp "gitlab-libs-snapshot-local/org/jfrog/test/multi3/4.7-SNAPSHOT/*.war" "ip=127.0.0.1"
     
     # bp = build publish
-    - ./jfrog rt bp gitlabci-maven-artifactory $CI_JOB_ID
+    - ./jfrog rt bp gitlab-maven-build $CI_JOB_ID
     
     # bpr = build promote 
-    # - ./jfrog rt bpr gitlabci-maven-artifactory $CI_JOB_ID kyle-maven-release-local
+    - ./jfrog rt bpr gitlab-maven-build $CI_JOB_ID gitlab-libs-stage-local --status=stage --comment="promote to stage"
     
     # bs = build scan, scan a already published build
-    # - ./jfrog rt bs gitlabci-maven-artifactory $CI_JOB_ID --fail=false
+    - ./jfrog rt bs gitlab-maven-build $CI_JOB_ID --fail=false
     
     # dl = download
-    # - ./jfrog rt dl kyle-maven-dev-local/org/jfrog/test/multi3/3.7-SNAPSHOT/multi3-3.7-20191213.050538-8.war all-my-frogs/
+    # - ./jfrog rt dl gitlab-libs-snapshot-local/org/jfrog/test/multi3/3.7-SNAPSHOT/multi3-3.7-20191213.050538-8.war all-my-frogs/
 
-  when: manual
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger"'
+      when: always
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      when: always

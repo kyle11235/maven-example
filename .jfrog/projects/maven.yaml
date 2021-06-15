@@ -2,9 +2,9 @@ version: 1
 type: maven
 resolver:
   serverId: art1
-  snapshotRepo: libs-snapshot
-  releaseRepo: libs-release
+  snapshotRepo: gitlab-libs-snapshot
+  releaseRepo: gitlab-libs-release
 deployer:
   serverId: art1
-  snapshotRepo: libs-snapshot-local
-  releaseRepo: libs-release-local
+  snapshotRepo: gitlab-libs-snapshot-local
+  releaseRepo: gitlab-libs-release-local
