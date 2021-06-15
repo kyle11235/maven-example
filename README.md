@@ -2,11 +2,14 @@
 
 - gitlab
 
+        https://gitlabdemo.online/users/sign_in
+        https://jfrog.com/blog/gitlab-and-artifactory-on-your-mark-get-set-build/
+
         - gitlab
         .gitlab-ci.yml
         
         - art maven
-        .gitlab-ci.yml -> maven.conf
+        .gitlab-ci.yml -> .jfrog/projects/maven.yaml
 
         - art jira
         .gitlab-ci.yml -> jira-cli.conf
