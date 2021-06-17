@@ -29,5 +29,6 @@
 
         git revert HEAD~1
         #BUG-1005
+        #BUG-1006
 
         
