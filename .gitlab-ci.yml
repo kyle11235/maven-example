@@ -32,11 +32,11 @@ build:
     # bcs = build collect environment variables 
     - ./jfrog rt bce gitlab-maven-build $CI_JOB_ID
         
-    # bag = build add git (git revision & jira)
+    # bag = build add git (git revision & issue)
     # The build-add-git (bag) command collects the Git revision and URL from the local .git directory and adds it to the build-info. 
     # It can also collect the list of tracked project issues (for example, issues stored in JIRA or other bug tracking systems) and add them to the build-info. 
     # The issues are collected by reading the git commit messages from the local git log
-    - ./jfrog rt bag gitlab-maven-build $CI_JOB_ID --config jira-cli.conf
+    - ./jfrog rt bag gitlab-maven-build $CI_JOB_ID --config issue-system.yaml
     
     # set sonar url
     - ./jfrog rt sp "gitlab-libs-snapshot-local/org/jfrog/test/multi3/4.7-SNAPSHOT/*.war" "qulity.gate.sonarUrl=http://192.168.230.156:9000/dashboard/index/"
@@ -46,7 +46,7 @@ build:
     - ./jfrog rt sp "gitlab-libs-snapshot-local/org/jfrog/test/multi3/4.7-SNAPSHOT/*.war" "ip=127.0.0.1"
     
     # bp = build publish
-    - ./jfrog rt bp gitlab-maven-build $CI_JOB_ID
+    - ./jfrog rt bp gitlab-maven-build $CI_JOB_ID --build-url=https://gitlabdemo.online/kylezhang/maven-example/-/jobs/$CI_JOB_ID
     
     # bpr = build promote 
     - ./jfrog rt bpr gitlab-maven-build $CI_JOB_ID gitlab-libs-stage-local --status=stage --comment="promote to stage"
