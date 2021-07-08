@@ -1,0 +1,37 @@
+- hosts: all
+
+  tasks:
+  - name: 删除上一次运行时创建的临时目录
+    file:
+      path: /tmp/data/replace_tmp
+      state: absent
+
+  - name: 创建一个临时目录 
+    file:
+      path: /tmp/data/replace_tmp
+      state: directory
+
+  - name: 将文件从Ansible服务器拷贝到测试服务器
+    copy: src=/tmp/data/ansible_test/ dest=/tmp/data/replace_tmp
+
+  - name: 记录测试服务器上那个临时录下的文件
+    shell: ls
+    args:
+      chdir: /tmp/data/replace_tmp
+    register: file_list
+
+  - name: 输出测试服务器上那个临时目录下的文件列表
+    debug:
+      msg: "{{ file_list }}"
+
+  - name: 输出ansible_env
+    debug:
+      msg: "{{ ansible_env }}"
+
+  - name: 对文件中的##SSH_CONNECTION##关键词进行替换
+    replace:
+      path: "/tmp/data/replace_tmp/{{ item }}"
+      regexp: "##SSH_CONNECTION##"
+      replace: "{{ ansible_env.SSH_CONNECTION }}"
+    with_items:
+      - "{{ file_list.stdout_lines }}"

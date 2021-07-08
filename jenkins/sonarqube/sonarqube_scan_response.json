@@ -1,0 +1,307 @@
+{
+    "component": {
+        "id": "AXfKq02sCxNTenXU9QD6",
+        "key": "guide-sonarqube-demo",
+        "name": "guide-sonarqube-demo",
+        "qualifier": "TRK",
+        "measures": [
+            {
+                "metric": "security_rating",
+                "value": "1.0",
+                "bestValue": true
+            },
+            {
+                "metric": "new_vulnerabilities",
+                "periods": [
+                    {
+                        "index": 1,
+                        "value": "0",
+                        "bestValue": true
+                    }
+                ],
+                "period": {
+                    "index": 1,
+                    "value": "0",
+                    "bestValue": true
+                }
+            },
+            {
+                "metric": "vulnerabilities",
+                "value": "0",
+                "bestValue": true
+            },
+            {
+                "metric": "duplicated_lines_density",
+                "value": "0.0",
+                "bestValue": true
+            },
+            {
+                "metric": "sqale_rating",
+                "value": "1.0",
+                "bestValue": true
+            },
+            {
+                "metric": "reliability_rating",
+                "value": "3.0",
+                "bestValue": false
+            },
+            {
+                "metric": "new_sqale_debt_ratio",
+                "periods": [
+                    {
+                        "index": 1,
+                        "value": "0.0",
+                        "bestValue": true
+                    }
+                ],
+                "period": {
+                    "index": 1,
+                    "value": "0.0",
+                    "bestValue": true
+                }
+            },
+            {
+                "metric": "bugs",
+                "value": "58",
+                "bestValue": false
+            },
+            {
+                "metric": "new_bugs",
+                "periods": [
+                    {
+                        "index": 1,
+                        "value": "0",
+                        "bestValue": true
+                    }
+                ],
+                "period": {
+                    "index": 1,
+                    "value": "0",
+                    "bestValue": true
+                }
+            },
+            {
+                "metric": "alert_status",
+                "value": "OK"
+            },
+            {
+                "metric": "sqale_debt_ratio",
+                "value": "0.5",
+                "bestValue": false
+            },
+            {
+                "metric": "quality_gate_details",
+                "value": "{\"level\":\"OK\",\"conditions\":[{\"metric\":\"new_reliability_rating\",\"op\":\"GT\",\"period\":1,\"error\":\"1\",\"actual\":\"1\",\"level\":\"OK\"},{\"metric\":\"new_security_rating\",\"op\":\"GT\",\"period\":1,\"error\":\"1\",\"actual\":\"1\",\"level\":\"OK\"},{\"metric\":\"new_maintainability_rating\",\"op\":\"GT\",\"period\":1,\"error\":\"1\",\"actual\":\"1\",\"level\":\"OK\"},{\"metric\":\"new_duplicated_lines_density\",\"op\":\"GT\",\"period\":1,\"error\":\"3\",\"actual\":\"0.0\",\"level\":\"OK\"}],\"ignoredConditions\":false}"
+            },
+            {
+                "metric": "coverage",
+                "value": "0.0",
+                "bestValue": false
+            },
+            {
+                "metric": "sqale_index",
+                "value": "115",
+                "bestValue": false
+            }
+        ]
+    },
+    "metrics": [
+        {
+            "key": "alert_status",
+            "name": "Quality Gate Status",
+            "description": "The project status with regard to its quality gate.",
+            "domain": "Releasability",
+            "type": "LEVEL",
+            "higherValuesAreBetter": true,
+            "qualitative": true,
+            "hidden": false,
+            "custom": false
+        },
+        {
+            "key": "bugs",
+            "name": "Bugs",
+            "description": "Bugs",
+            "domain": "Reliability",
+            "type": "INT",
+            "higherValuesAreBetter": false,
+            "qualitative": false,
+            "hidden": false,
+            "custom": false,
+            "bestValue": "0"
+        },
+        {
+            "key": "coverage",
+            "name": "Coverage",
+            "description": "Coverage by tests",
+            "domain": "Coverage",
+            "type": "PERCENT",
+            "higherValuesAreBetter": true,
+            "qualitative": true,
+            "hidden": false,
+            "custom": false,
+            "decimalScale": 1,
+            "bestValue": "100.0",
+            "worstValue": "0.0"
+        },
+        {
+            "key": "duplicated_lines_density",
+            "name": "Duplicated Lines (%)",
+            "description": "Duplicated lines balanced by statements",
+            "domain": "Duplications",
+            "type": "PERCENT",
+            "higherValuesAreBetter": false,
+            "qualitative": true,
+            "hidden": false,
+            "custom": false,
+            "decimalScale": 1,
+            "bestValue": "0.0",
+            "worstValue": "100.0"
+        },
+        {
+            "key": "new_bugs",
+            "name": "New Bugs",
+            "description": "New Bugs",
+            "domain": "Reliability",
+            "type": "INT",
+            "higherValuesAreBetter": false,
+            "qualitative": true,
+            "hidden": false,
+            "custom": false,
+            "bestValue": "0"
+        },
+        {
+            "key": "new_coverage",
+            "name": "Coverage on New Code",
+            "description": "Coverage of new/changed code",
+            "domain": "Coverage",
+            "type": "PERCENT",
+            "higherValuesAreBetter": true,
+            "qualitative": true,
+            "hidden": false,
+            "custom": false,
+            "decimalScale": 1,
+            "bestValue": "100.0",
+            "worstValue": "0.0"
+        },
+        {
+            "key": "new_sqale_debt_ratio",
+            "name": "Technical Debt Ratio on New Code",
+            "description": "Technical Debt Ratio of new/changed code.",
+            "domain": "Maintainability",
+            "type": "PERCENT",
+            "higherValuesAreBetter": false,
+            "qualitative": true,
+            "hidden": false,
+            "custom": false,
+            "decimalScale": 1,
+            "bestValue": "0.0",
+            "worstValue": "100.0"
+        },
+        {
+            "key": "new_vulnerabilities",
+            "name": "New Vulnerabilities",
+            "description": "New Vulnerabilities",
+            "domain": "Security",
+            "type": "INT",
+            "higherValuesAreBetter": false,
+            "qualitative": true,
+            "hidden": false,
+            "custom": false,
+            "bestValue": "0"
+        },
+        {
+            "key": "quality_gate_details",
+            "name": "Quality Gate Details",
+            "description": "The project detailed status with regard to its quality gate",
+            "domain": "General",
+            "type": "DATA",
+            "qualitative": false,
+            "hidden": false,
+            "custom": false
+        },
+        {
+            "key": "reliability_rating",
+            "name": "Reliability Rating",
+            "description": "Reliability rating",
+            "domain": "Reliability",
+            "type": "RATING",
+            "higherValuesAreBetter": false,
+            "qualitative": true,
+            "hidden": false,
+            "custom": false,
+            "bestValue": "1.0",
+            "worstValue": "5.0"
+        },
+        {
+            "key": "security_rating",
+            "name": "Security Rating",
+            "description": "Security rating",
+            "domain": "Security",
+            "type": "RATING",
+            "higherValuesAreBetter": false,
+            "qualitative": true,
+            "hidden": false,
+            "custom": false,
+            "bestValue": "1.0",
+            "worstValue": "5.0"
+        },
+        {
+            "key": "sqale_debt_ratio",
+            "name": "Technical Debt Ratio",
+            "description": "Ratio of the actual technical debt compared to the estimated cost to develop the whole source code from scratch",
+            "domain": "Maintainability",
+            "type": "PERCENT",
+            "higherValuesAreBetter": false,
+            "qualitative": true,
+            "hidden": false,
+            "custom": false,
+            "decimalScale": 1,
+            "bestValue": "0.0",
+            "worstValue": "100.0"
+        },
+        {
+            "key": "sqale_index",
+            "name": "Technical Debt",
+            "description": "Total effort (in hours) to fix all the issues on the component and therefore to comply to all the requirements.",
+            "domain": "Maintainability",
+            "type": "WORK_DUR",
+            "higherValuesAreBetter": false,
+            "qualitative": true,
+            "hidden": false,
+            "custom": false,
+            "bestValue": "0"
+        },
+        {
+            "key": "sqale_rating",
+            "name": "Maintainability Rating",
+            "description": "A-to-E rating based on the technical debt ratio",
+            "domain": "Maintainability",
+            "type": "RATING",
+            "higherValuesAreBetter": false,
+            "qualitative": true,
+            "hidden": false,
+            "custom": false,
+            "bestValue": "1.0",
+            "worstValue": "5.0"
+        },
+        {
+            "key": "vulnerabilities",
+            "name": "Vulnerabilities",
+            "description": "Vulnerabilities",
+            "domain": "Security",
+            "type": "INT",
+            "higherValuesAreBetter": false,
+            "qualitative": false,
+            "hidden": false,
+            "custom": false,
+            "bestValue": "0"
+        }
+    ],
+    "periods": [
+        {
+            "index": 1,
+            "mode": "PREVIOUS_VERSION",
+            "date": "2021-02-22T16:55:54+0000"
+        }
+    ]
+}

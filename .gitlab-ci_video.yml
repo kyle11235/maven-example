@@ -1,0 +1,107 @@
+
+include:
+  - template: Security/Dependency-Scanning.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/License-Scanning.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Security/License-Scanning.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Security/Secret-Detection.gitlab-ci.yml
+
+variables:
+  DS_JAVA_VERSION: 8
+
+stages:
+- build
+- test
+- prepare
+- release
+
+build:
+  image: maven:3.5.4-jdk-8-alpine
+  variables:
+    MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  cache:
+    paths:
+      - ./.m2/repository/
+  stage: build
+  script:
+    # Add git
+    - apk add git
+    # Download JFrog CLI
+    - curl -fL https://getcli.jfrog.io | sh
+    # Set the M2_HOME environment variable 
+    - export M2_HOME=/usr/share/maven
+    # Configure Artifactory instance with JFrog CLI
+    # - ./jfrog rt config --url=$ARTIFACTORY_URL --user=$ARTIFACTORY_USER --password=$ARTIFACTORY_PASS
+    - ./jfrog config add art1 --artifactory-url=$ARTIFACTORY_URL --user=$ARTIFACTORY_USER --password=$ARTIFACTORY_PASS
+    - ./jfrog c show
+    # - mvn clean install
+    # - ./jfrog rt "mvn clean install sonar:sonar -Dsonar.language=java -Dsonar.projectKey=gitlab-maven-build -Dsonar.java.binaries=* -Dsonar.host.url=http://10.0.0.173:9000 -Dsonar.login=308aa92369500dbfff00b38283e358031bfea8aa" --build-name=gitlab-maven-build --build-number=$CI_JOB_ID
+    - ./jfrog rt mvn clean install --build-name=gitlab-maven-build --build-number=$CI_JOB_ID 
+  
+    # bcs = build collect environment variables 
+    - ./jfrog rt bce gitlab-maven-build $CI_JOB_ID
+        
+    # bag = build add git (git revision & issue)
+    # The build-add-git (bag) command collects the Git revision and URL from the local .git directory and adds it to the build-info. 
+    # It can also collect the list of tracked project issues (for example, issues stored in JIRA or other bug tracking systems) and add them to the build-info. 
+    # The issues are collected by reading the git commit messages from the local git log
+    - ./jfrog rt bag gitlab-maven-build $CI_JOB_ID --config issue-system.yaml
+    
+    # set sonar url
+    - ./jfrog rt sp "gitlab-libs-snapshot-local/org/jfrog/test/multi3/4.7-SNAPSHOT/*.war" "qulity.gate.sonarUrl=http://192.168.230.156:9000/dashboard/index/"
+    
+    # sp = set property
+    - ./jfrog rt sp "gitlab-libs-snapshot-local/org/jfrog/test/multi3/4.7-SNAPSHOT/*.war" "deploy.tool=ansible"
+    - ./jfrog rt sp "gitlab-libs-snapshot-local/org/jfrog/test/multi3/4.7-SNAPSHOT/*.war" "ip=127.0.0.1"
+    
+    # bp = build publish
+    - ./jfrog rt bp gitlab-maven-build $CI_JOB_ID --build-url=$CI_JOB_URL 2>&1| tee build_info.txt
+
+    - grep "successfully" build_info.txt|awk '{printf "JFROG_BUILD_URL=%s",$NF}'|sed -e 's:artifactory/webapp:ui:g' > variables.env
+
+    - cat variables.env
+    
+    # bpr = build promote 
+  #  - ./jfrog rt bpr gitlab-maven-build $CI_JOB_ID gitlab-libs-stage-local --status=stage --comment="promote to stage"
+    
+    # bs = build scan, scan a already published build
+    - ./jfrog rt bs gitlab-maven-build $CI_JOB_ID --fail=false
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never                                             # Do not run this job when a tag is created manually
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - when: always
+  artifacts:
+    reports:
+      dotenv: variables.env
+
+prepare_job:
+  stage: prepare                                              # This stage must run before the release stage
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never                                             # Do not run this job when a tag is created manually
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH             # Run this job when commits are pushed or merged to the default branch
+  script:
+    - echo "TAG=v$(cat VERSION)" >> variables.env             # and append to the variables.env file
+  artifacts:
+    reports:
+      dotenv: variables.env 
+
+release:
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  stage: release
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never                                             # Do not run this job when a tag is created manually
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH             # Run this job when commits are pushed or merged to the default branch
+  script:
+    - echo 'Releasing the build'
+    - echo "$JFROG_BUILD_URL"
+  release:
+    tag_name: '$TAG'                                                 # variables must be defined elsewhere
+    ref: '$CI_COMMIT_SHA'                                            # in the pipeline. For example, in the
+    description: 'Release for GitLab + JFrog demo'
+    assets:
+      links:
+        - name: 'JFrog package'
+          url: $JFROG_BUILD_URL

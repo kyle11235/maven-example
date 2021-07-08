@@ -1,0 +1,1 @@
+curl 'http://8.140.116.183:8080/sonarqube-webhook' -X 'POST'  -H 'content-type:application/json' -d@jenkins_webhook_payload.json
