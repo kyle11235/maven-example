@@ -211,7 +211,7 @@ node('master') {
 
     // xray scan build 
     // https://www.jfrog.com/confluence/display/JFROG/CI-CD+Integration+with+Xray
-    // https://www.jfrog.com/confluence/display/JFROG/Scripted+Pipeline+Syntax
+    // https://www.jfrog.com/confluence/display/JFROG/Scripted+Pipeline+Syntax#ScriptedPipelineSyntax-ScanningBuildswithJFrogXray
     stage('6. Xray Scan'){
 
         // 1. ensure xray's watch's policy's rule's failBuild is checked
