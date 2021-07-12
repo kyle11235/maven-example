@@ -182,7 +182,7 @@
                         http://x.x.x.x:9000/
                         default admin/admin
                         
-                        configure jenkins webhook in sonarqube
+                        configure jenkins webhook in sonarqube e.g. jenkins port = 8080
                         http://x.x.x.x:8080/sonarqube-webhook (no / at the end)
 
 

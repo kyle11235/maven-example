@@ -1,12 +1,17 @@
-// jenkins shared library
-def libraryPath = '/Users/kyle/workspace/microservice'
+// examplePath
+// examplePath/vars -> jira demo required
+// examplePath/jenkins/sonarqube -> sonarqube demo required
+// examplePath/jenkins/postman -> postman demo required
+def examplePath = '/Users/kyle/workspace/maven-example'
+
+// jenkins shared library for jira demo
 library identifier: 'local-lib@master', 
-        retriever: modernSCM([$class: 'GitSCMSource', remote: "$libraryPath"]), 
+        retriever: modernSCM([$class: 'GitSCMSource', remote: "$examplePath"]), 
         changelog: false
 
 // jira
 def JiraUrl = 'https://kyle11235.atlassian.net/browse/'
-def JiraSite = 'myjira'
+def JiraSite = 'myjira' // jira plugin name
 def JiraProjectID = '10001'
 
 // sonarqube
@@ -15,10 +20,10 @@ def SonarScanner = 'sonarscanner'
 def TestResultPath = 'multi3/target/surefire-reports'  
 
 // mock sonarqube
-def sonarqube_scan_response = '/Users/kyle/workspace/maven-example/jenkins/sonarqube/sonarqube_scan_response.json'
+def sonarqube_scan_response = "${examplePath}/jenkins/sonarqube/sonarqube_scan_response.json"
 
 // postman auto test script
-def collection = '/Users/kyle/workspace/maven-example/jenkins/postman/jfrog_auto_localhost.postman_collection.json'
+def collection = "${examplePath}/jenkins/postman/jfrog_auto_localhost.postman_collection.json"
 
 // show REST API to add property / rtMaven.deployer.addProperty
 def artUrl = 'http://182.92.214.141:8081/artifactory'
@@ -286,39 +291,14 @@ node('master') {
         echo "passQualityGate=" + passQualityGate
     }
 
-    // promote
-    stage('8. Promote') {  
-        if (passQualityGate) {  
-            
-            // promotion path = libs-snapshot-local -> libs-stage-local -> libs-release-local -> libs-prod-local
-            def promotionConfig = [
-                // Optional parameters
-                'buildName'          : buildInfo.name,
-                'buildNumber'        : buildInfo.number,
-                'comment'            : 'this is the promotion comment', // -> Release History tab of build
-                'status'             : 'Staged', // Staged, Released, SIT, UAT...
-                'sourceRepo'         : 'libs-snapshot-local',
-                
-                // Mandatory parameters
-                'targetRepo'         : 'libs-stage-local',
-                
-                // Optional parameters
-                'includeDependencies': false, // False by default
-                'copy'               : true, // Move is the default
-                'failFast'           : true // False by default.
-            ]
-
-            // promote it
-            server.promote promotionConfig
-        } 
-    }   
-
     // deploy
-    stage('9. Auto Deploy') {
+    stage('8. Auto Deploy') {
         if (passQualityGate) {  
             // 1. download war file
             def FILENAME = "/opt/tomcat/target/app.war"
-            sh "curl -H \"X-JFrog-Art-Api: ${art_apikey}\" -X GET \"${artUrl}/libs-stage-local/org/jfrog/test/multi3/[RELEASE]/multi3-[RELEASE].war\" -o $FILENAME"
+            
+            sh "curl -H \"X-JFrog-Art-Api: ${art_apikey}\" -X GET \"${artUrl}/${appPath}\" -o $FILENAME"
+            // sh "curl -H \"X-JFrog-Art-Api: ${art_apikey}\" -X GET \"${artUrl}/libs-snapshot-local/org/jfrog/test/multi3/[RELEASE]/multi3-[RELEASE].war\" -o $FILENAME"
 
             // 2. start tomcat
             sh "/opt/tomcat/start_tomcat.sh"    
@@ -326,7 +306,7 @@ node('master') {
     }
 
     // postman
-    stage("10. Auto API Test") {  
+    stage("9. Auto API Test") {  
         if (passQualityGate) {  
             try {  
                 sh "newman run ${collection} -r cli,json --reporter-json-export report.json"  
@@ -356,12 +336,9 @@ node('master') {
         }
     }
 
-    // notify
-    stage('11. Notify Tester') {
-        
+    stage('10. Notify Tester') {
+        // notify -> manual test -> promote        
     }
-
-
 
 }
 
