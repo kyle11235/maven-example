@@ -1,14 +1,12 @@
-
-
-// String parameters
-buildInfo.name = buildName
-buildInfo.number = buildNumber
-
 // promotion path = libs-snapshot-local -> libs-release-local
 
 // 1. promote by plugin script
 def server = Artifactory.server 'art1'
 def buildInfo = Artifactory.newBuildInfo()
+
+// String parameters
+buildInfo.name = buildName
+buildInfo.number = buildNumber
 
 def promotionConfig = [
     // Optional parameters
